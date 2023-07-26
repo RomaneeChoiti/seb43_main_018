@@ -2,36 +2,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TrashCanData from '../../api/MapPageAPI';
+import getCurrentPosition from '../MapResources/GeolocationUtils';
 
 function NearbyTrashCanList() {
 	const [trashCans, setTrashCans] = useState([]);
 
-	const getCurrentPosition = () => {
-		return new Promise((resolve, reject) => {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(
-					(position) => {
-						const { latitude, longitude } = position.coords;
-						resolve({ latitude, longitude });
-					},
-					(error) => {
-						reject(error);
-					},
-				);
-			} else {
-				reject(new Error('Geolocation is not supported by this browser.'));
-			}
-		});
-	};
-
-	// 쓰레기통 데이터를 가져오는 함수
 	const fetchTrashCans = useCallback(async () => {
 		try {
 			const response = await TrashCanData();
 			const { latitude, longitude } = await getCurrentPosition();
 			const sortedTrashCans = response.data
 				.map((trashCan) => {
-					// 현재 위치와 쓰레기통의 거리 계산
 					const distance =
 						Math.sqrt(
 							(latitude - trashCan.Latitude) ** 2 +
@@ -40,7 +21,6 @@ function NearbyTrashCanList() {
 					return { ...trashCan, distance };
 				})
 				.sort((a, b) => {
-					// 거리순으로 정렬
 					return a.distance - b.distance;
 				});
 			// 중복된 Address 제거
@@ -48,8 +28,7 @@ function NearbyTrashCanList() {
 				(trashCan, index, self) =>
 					index === self.findIndex((t) => t.Address === trashCan.Address),
 			);
-
-			const limitedTrashCans = uniqueTrashCans.slice(0, 10); // 처음 10개의 항목만 남기기
+			const limitedTrashCans = uniqueTrashCans.slice(0, 10);
 			setTrashCans(limitedTrashCans);
 		} catch (error) {
 			console.error(error);
