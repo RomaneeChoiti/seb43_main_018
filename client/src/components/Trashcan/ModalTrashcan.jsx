@@ -3,11 +3,11 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { Button } from '../styles/Buttons';
+import { trashCanInfoAPI } from '../../api/MapPageAPI';
+import { Button } from '../../styles/Buttons';
 
-function TrashCanModal({ trashCan }) {
+function ModalTrashcan({ trashCan }) {
 	const [TrashCanModalOpen, setTrashCanModalOpen] = useState(true);
-	const mapUrl = process.env.REACT_APP_API_URL;
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 	const memberId = useSelector((state) => state.auth.memberId);
 
@@ -39,7 +39,7 @@ function TrashCanModal({ trashCan }) {
 				voteType,
 			};
 			axios
-				.post(`${mapUrl}/votes`, data)
+				.post(`${trashCanInfoAPI}/votes`, data)
 				.then((response) => {
 					console.log('POST 요청 성공:', response.data);
 				})
@@ -176,4 +176,4 @@ const DislikeButton = styled(TrashModalButton)`
 	}
 `;
 
-export default TrashCanModal;
+export default ModalTrashcan;

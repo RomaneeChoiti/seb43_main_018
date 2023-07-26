@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import TrashCanData from '../api/mapAPI';
+import TrashCanData from '../../api/MapPageAPI';
 
 function NearbyTrashCanList() {
 	const [trashCans, setTrashCans] = useState([]);

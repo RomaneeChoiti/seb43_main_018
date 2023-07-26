@@ -3,24 +3,19 @@ import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import styled from 'styled-components';
 import { Provider, useSelector } from 'react-redux';
-import REACT_APP_KAKAO_MAP_API_KEY from './KakaoMap';
-import Modal from './Modal';
-import TrashCanModal from './TrashCanModal';
-import getCurrentPosition from './GeolocationUtils';
-import TrashCansFetcher from './TrashCansFetcher';
-import { store } from '../store/UserSlice';
+import Modal from '../Modal';
+import ModalTrashcan from '../Trashcan/ModalTrashcan';
+import { store } from '../../store/UserSlice';
+import { kakaoMapAPI } from '../../api/MapPageAPI';
 
-function Map() {
+function KakaoMap() {
+	// const [, setIsLoading] = useState(true);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [, setIsLoading] = useState(true);
-	const [trashCans, setTrashCans] = useState([]);
+	const [trashCans] = useState([]);
 	const [, setTrashMarkers] = useState([]);
-	const [, setData] = useState([]);
 
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 	const memberId = useSelector((state) => state.auth.memberId);
-
-	const mapUrl = process.env.REACT_APP_API_URL;
 
 	// 쓰레기통 로딩 중
 	// useEffect(() => {
@@ -34,13 +29,13 @@ function Map() {
 	const loadKakaoMap = useCallback(() => {
 		// 카카오맵 스크립트 읽어오기
 		const script = document.createElement('script');
-		script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${REACT_APP_KAKAO_MAP_API_KEY}`;
+		script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${kakaoMapAPI}`;
 		script.onload = () => {
 			const { kakao } = window;
 			kakao.maps.load(
 				() => {
 					const mapContainer = document.getElementById('map');
-					// 위치 초기 값을 강남역으로 설정
+					// getCurrentPosition 자기 위치
 					navigator.geolocation.getCurrentPosition((position) => {
 						const lat = position.coords.latitude;
 						const lng = position.coords.longitude;
@@ -92,7 +87,7 @@ function Map() {
 								const root = document.getElementById('modal-root');
 								ReactDOM.createRoot(root).render(
 									<Provider store={store}>
-										<TrashCanModal
+										<ModalTrashcan
 											trashCan={trashCan}
 											isAuthenticated={isAuthenticated}
 											memberId={memberId}
@@ -128,14 +123,7 @@ function Map() {
 			<MapStyle>
 				<div id="map" className="map" />
 			</MapStyle>
-			<TrashCansFetcher
-				mapUrl={mapUrl}
-				getCurrentPosition={getCurrentPosition}
-				setTrashCans={setTrashCans}
-				setTrashMarkers={setTrashMarkers}
-				setIsLoading={setIsLoading}
-				setData={setData}
-			/>
+
 			{isModalOpen && (
 				<Modal
 					message="GPS 기능이 꺼져 있으면 현재 위치를 가져올 수 없습니다. 
@@ -154,6 +142,7 @@ function Map() {
 		</>
 	);
 }
+
 // 맵사이즈
 const MapStyle = styled.div`
 	height: 100vh;
@@ -191,4 +180,4 @@ const MapStyle = styled.div`
 // 	background-color: rgba(255, 255, 255, 0.9);
 // `;
 
-export default Map;
+export default KakaoMap;
