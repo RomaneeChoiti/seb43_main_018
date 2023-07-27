@@ -7,6 +7,7 @@ import Modal from '../Modal';
 import ModalTrashcan from '../Trashcan/ModalTrashcan';
 import { store } from '../../store/UserSlice';
 import { kakaoMapAPI } from '../../api/MapPageAPI';
+import getCurrentPosition from './GeolocationUtils';
 
 function KakaoMap() {
 	// const [, setIsLoading] = useState(true);
@@ -35,16 +36,16 @@ function KakaoMap() {
 			kakao.maps.load(
 				() => {
 					const mapContainer = document.getElementById('map');
-					// getCurrentPosition 자기 위치
-					navigator.geolocation.getCurrentPosition((position) => {
-						const lat = position.coords.latitude;
-						const lng = position.coords.longitude;
+					getCurrentPosition().then((position) => {
+						const [lat, lng] = [position.latitude, position.longitude];
 						const options = {
 							center: new kakao.maps.LatLng(lat, lng),
 							level: 3,
 						};
+
 						// 지도 객체를 생성
 						const map = new kakao.maps.Map(mapContainer, options);
+
 						// 유저 마커
 						const userMarkerImage = new kakao.maps.MarkerImage(
 							`${process.env.PUBLIC_URL}/assets/myLocationIcon.png`,
@@ -57,6 +58,7 @@ function KakaoMap() {
 							image: userMarkerImage,
 						});
 						marker.setMap(map);
+
 						// 쓰레기통 마커
 						trashCans.forEach((trashCan) => {
 							if (!trashCan) return; // 쓰레기통이 없는 경우 건너뜀

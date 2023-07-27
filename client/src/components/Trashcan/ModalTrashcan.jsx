@@ -29,6 +29,7 @@ function ModalTrashcan({ trashCan }) {
 	const handleCloseTrashCanModal = () => {
 		setTrashCanModalOpen(false);
 	};
+
 	const handleVote = (event, voteType) => {
 		event.preventDefault(); // 새로고침 방지
 		// POST 요청 보내기
