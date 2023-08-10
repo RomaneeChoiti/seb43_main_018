@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import TrashCanData from '../../api/MapPageAPI';
-import getCurrentPosition from '../MapResources/GeolocationUtils';
 
 function NearbyTrashCanList() {
 	const [trashCans, setTrashCans] = useState([]);
@@ -10,21 +9,7 @@ function NearbyTrashCanList() {
 	const fetchTrashCans = useCallback(async () => {
 		try {
 			const response = await TrashCanData();
-			const { latitude, longitude } = await getCurrentPosition();
-			const sortedTrashCans = response.data
-				.map((trashCan) => {
-					const distance =
-						Math.sqrt(
-							(latitude - trashCan.Latitude) ** 2 +
-								(longitude - trashCan.Longitude) ** 2,
-						) * 100000;
-					return { ...trashCan, distance };
-				})
-				.sort((a, b) => {
-					return a.distance - b.distance;
-				});
-			// 중복된 Address 제거
-			const uniqueTrashCans = sortedTrashCans.filter(
+			const uniqueTrashCans = response.filter(
 				(trashCan, index, self) =>
 					index === self.findIndex((t) => t.Address === trashCan.Address),
 			);
