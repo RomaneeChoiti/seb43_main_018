@@ -1,19 +1,27 @@
 /* eslint-disable no-console */
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import TrashCanData from '../../api/MapPageAPI';
+import ScopeTrashCanData from '../../api/ScopeTrashCanData';
 
 function NearbyTrashCanList() {
 	const [trashCans, setTrashCans] = useState([]);
 
 	const fetchTrashCans = useCallback(async () => {
 		try {
-			const response = await TrashCanData();
+			const cachedData = localStorage.getItem('cachedTrashCans');
+			if (cachedData) {
+				setTrashCans(JSON.parse(cachedData));
+				return;
+			}
+			const response = await ScopeTrashCanData();
 			const uniqueTrashCans = response.filter(
 				(trashCan, index, self) =>
 					index === self.findIndex((t) => t.Address === trashCan.Address),
 			);
 			const limitedTrashCans = uniqueTrashCans.slice(0, 10);
+
+			localStorage.setItem('cachedTrashCans', JSON.stringify(limitedTrashCans));
+
 			setTrashCans(limitedTrashCans);
 		} catch (error) {
 			console.error(error);

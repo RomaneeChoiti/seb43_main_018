@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { trashCanInfoAPI } from '../../api/MapPageAPI';
+import { trashCanInfoAPI } from '../../api/TrashcanData';
 import { Button } from '../../styles/Buttons';
 
 function ModalTrashcan({ trashCan }) {

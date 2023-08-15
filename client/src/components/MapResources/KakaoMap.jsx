@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import getCurrentPosition from './GeolocationUtils';
 import UserMaker from '../MapMakers/UserMaker';
+// import TypeDivide from '../MapMakers/TypeDivide';
 import TrashcanMaker from '../MapMakers/TrashcanMaker';
 
 function KakaoMap() {
@@ -15,11 +16,11 @@ function KakaoMap() {
 				level: 3,
 			};
 			const map = new kakao.maps.Map(mapContainer, options);
-			UserMaker({ lat, lng, map });
 
-			TrashcanMaker(map);
+			UserMaker({ lat, lng, map });
+			TrashcanMaker({ map });
 		});
-	});
+	}, []);
 
 	return (
 		<MapStyle>
