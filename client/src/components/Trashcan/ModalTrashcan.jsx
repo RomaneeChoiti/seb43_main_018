@@ -11,6 +11,7 @@ function ModalTrashcan({ trashCan }) {
 	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 	const memberId = useSelector((state) => state.auth.memberId);
 
+	// 길찾기
 	const handleLoadDirections = () => {
 		const startLat = 37.497942; // 출발지 위도
 		const startLng = 127.027621; // 출발지 경도
@@ -30,6 +31,7 @@ function ModalTrashcan({ trashCan }) {
 		setTrashCanModalOpen(false);
 	};
 
+	// 투표
 	const handleVote = (event, voteType) => {
 		event.preventDefault(); // 새로고침 방지
 		// POST 요청 보내기
@@ -49,7 +51,6 @@ function ModalTrashcan({ trashCan }) {
 				});
 		}
 	};
-
 	// 좋아요
 	const handleLikeCount = (event) => {
 		handleVote(event, 'LIKE');

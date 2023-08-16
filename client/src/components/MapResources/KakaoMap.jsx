@@ -4,9 +4,8 @@ import getCurrentPosition from './GeolocationUtils';
 import UserMaker from '../MapMakers/UserMaker';
 import TrashcanMaker from '../MapMakers/TrashcanMaker';
 
+const KAKAO_MAP_API_KEY = process.env.REACT_APP_KAKAO_MAP_API_KEY;
 function KakaoMap() {
-	const KAKAO_MAP_API_KEY = process.env.REACT_APP_KAKAO_MAP_API_KEY;
-
 	useEffect(() => {
 		const script = document.createElement('script');
 		script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${KAKAO_MAP_API_KEY}&autoload=false`;
