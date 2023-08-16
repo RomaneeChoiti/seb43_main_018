@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import GlobalStyles from './styles/index';
-import MapPage from './pages/mapPage';
+import MapPage from './pages/MapPage';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import UserInfo from './pages/UserInfo';

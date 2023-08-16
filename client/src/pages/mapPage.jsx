@@ -1,8 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import styled from 'styled-components';
 import KakaoMap from '../components/MapResources/KakaoMap';
-// import { useEffect, useState } from 'react';
-// import { useGesture } from 'react-use-gesture';
 import NearbyTrashCanList from '../components/Trashcan/NearbyTrashCanList';
 
 function MapPage() {

@@ -2,24 +2,32 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import getCurrentPosition from './GeolocationUtils';
 import UserMaker from '../MapMakers/UserMaker';
-// import TypeDivide from '../MapMakers/TypeDivide';
 import TrashcanMaker from '../MapMakers/TrashcanMaker';
 
 function KakaoMap() {
-	useEffect(() => {
-		const { kakao } = window;
-		const mapContainer = document.getElementById('map');
-		getCurrentPosition().then((position) => {
-			const [lat, lng] = [position.latitude, position.longitude];
-			const options = {
-				center: new kakao.maps.LatLng(lat, lng),
-				level: 3,
-			};
-			const map = new kakao.maps.Map(mapContainer, options);
+	const KAKAO_MAP_API_KEY = process.env.REACT_APP_KAKAO_MAP_API_KEY;
 
-			UserMaker({ lat, lng, map });
-			TrashcanMaker({ map });
-		});
+	useEffect(() => {
+		const script = document.createElement('script');
+		script.src = `https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${KAKAO_MAP_API_KEY}&autoload=false`;
+		script.onload = () => {
+			const { kakao } = window;
+			kakao.maps.load(() => {
+				const mapContainer = document.getElementById('map');
+				getCurrentPosition().then((position) => {
+					const [lat, lng] = [position.latitude, position.longitude];
+					const options = {
+						center: new kakao.maps.LatLng(lat, lng),
+						level: 3,
+					};
+					const map = new kakao.maps.Map(mapContainer, options);
+
+					UserMaker({ lat, lng, map });
+					TrashcanMaker({ map });
+				});
+			});
+		};
+		document.head.appendChild(script);
 	}, []);
 
 	return (
