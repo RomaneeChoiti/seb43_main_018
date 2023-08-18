@@ -1,102 +1,52 @@
-/* eslint-disable no-console */
-import axios from 'axios';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { trashCanInfoAPI } from '../../api/TrashcanData';
+import VoteTrashcanAPI from '../../api/VoteTrashcanAPI';
 import { Button } from '../../styles/Buttons';
+import handleLoadDirections from './DirectionTrashcan';
+import handleLoadRoadView from './RoadView';
 
 function ModalTrashcan({ trashCan }) {
 	const [TrashCanModalOpen, setTrashCanModalOpen] = useState(true);
-	const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-	const memberId = useSelector((state) => state.auth.memberId);
 
-	// 길찾기
-	const handleLoadDirections = () => {
-		const startLat = 37.497942; // 출발지 위도
-		const startLng = 127.027621; // 출발지 경도
-		const destinationLat = trashCan.Latitude; // 목적지 위도
-		const destinationLng = trashCan.Longitude; // 목적지 경도
-
-		// 카카오 맵 API의 길찾기 페이지 열기
-		window.open(
-			`https://map.kakao.com/link/to/,${trashCan.설치위치},${destinationLat},${destinationLng},${startLat},${startLng}`,
-			'_blank',
-		);
-	};
-	// NOTE: 카카오API에선 출발지와 목적지를 각각 지정이 불가능하고 목적지만 지정이 가능합니다.
-
-	// 모달창 닫기
 	const handleCloseTrashCanModal = () => {
 		setTrashCanModalOpen(false);
 	};
 
-	// 투표
-	const handleVote = (event, voteType) => {
-		event.preventDefault(); // 새로고침 방지
-		// POST 요청 보내기
-		if (isAuthenticated) {
-			const data = {
-				memberId,
-				trashCanId: trashCan.id,
-				voteType,
-			};
-			axios
-				.post(`${trashCanInfoAPI}/votes`, data)
-				.then((response) => {
-					console.log('POST 요청 성공:', response.data);
-				})
-				.catch((error) => {
-					console.error('POST 요청 실패:', error);
-				});
-		}
-	};
-	// 좋아요
-	const handleLikeCount = (event) => {
-		handleVote(event, 'LIKE');
+	const handleVoteCount = (voteType) => {
+		VoteTrashcanAPI(voteType, { trashCan });
 	};
 
-	// 싫어요
-	const handleDislikeCount = (event) => {
-		handleVote(event, 'DISLIKE');
-	};
-
-	// 로드뷰
-	const handleLoadRoadView = (event) => {
-		event.preventDefault(); // 새로고침 방지
-		// 카카오맵 로드뷰 페이지 URL 주소 설정
-		const roadViewUrl = `https://map.kakao.com/link/roadview/${trashCan.Latitude},${trashCan.Longitude}`;
-		// 새로운 창 열기
-		window.open(roadViewUrl);
-	};
-
-	if (!TrashCanModalOpen) {
-		return null;
-	}
 	return (
-		<ModalContainer onClick={handleCloseTrashCanModal}>
-			<Modal>
-				<ModalHeader>
-					<ModalTitle>{trashCan.Address}</ModalTitle>
-				</ModalHeader>
-				<BtnContent>
-					<TrashModalButton onClick={handleLoadRoadView}>
-						로드뷰
-					</TrashModalButton>
-					<TrashModalButton onClick={handleLoadDirections}>
-						길찾기
-					</TrashModalButton>
-					<LikeDislikeContainer>
-						<LikeButton type="button" onClick={handleLikeCount}>
-							좋아요 : {trashCan.likeCount}
-						</LikeButton>
-						<DislikeButton type="button" onClick={handleDislikeCount}>
-							싫어요 : {trashCan.dislikeCount}
-						</DislikeButton>
-					</LikeDislikeContainer>
-				</BtnContent>
-			</Modal>
-		</ModalContainer>
+		TrashCanModalOpen && (
+			<ModalContainer onClick={handleCloseTrashCanModal}>
+				<Modal>
+					<ModalHeader>
+						<ModalTitle>{trashCan.Address}</ModalTitle>
+					</ModalHeader>
+					<BtnContent>
+						<TrashModalButton onClick={() => handleLoadRoadView({ trashCan })}>
+							로드뷰
+						</TrashModalButton>
+						<TrashModalButton
+							onClick={() => handleLoadDirections({ trashCan })}
+						>
+							길찾기
+						</TrashModalButton>
+						<LikeDislikeContainer>
+							<LikeButton type="button" onClick={() => handleVoteCount('LIKE')}>
+								좋아요 : {trashCan.likeCount}
+							</LikeButton>
+							<DislikeButton
+								type="button"
+								onClick={() => handleVoteCount('DISLIKE')}
+							>
+								싫어요 : {trashCan.dislikeCount}
+							</DislikeButton>
+						</LikeDislikeContainer>
+					</BtnContent>
+				</Modal>
+			</ModalContainer>
+		)
 	);
 }
 const ModalContainer = styled.div`
